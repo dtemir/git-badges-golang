@@ -55,6 +55,7 @@ func organizationsHandler(client github.Client) http.HandlerFunc {
 
 		// Display SVG badge
 		w.Header().Set("content-type", "image/svg+xml")
+		w.Header().Set("cache-control", "no-cache")
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "%s", svg)
 	}
@@ -99,6 +100,7 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 		svg := getSVG(url)
 
 		w.Header().Set("content-type", "image/svg+xml")
+		w.Header().Set("cache-control", "no-cache")
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "%s", svg)
 	}
