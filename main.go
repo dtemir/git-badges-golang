@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -47,9 +48,25 @@ func organizationsHandler(client github.Client) http.HandlerFunc {
 			log.Fatal("Error fetching organization list\n %w", username, err)
 		}
 
-		// Redirect to shields.io badge
+		// Create a shields.io badge
 		url := fmt.Sprintf("https://img.shields.io/badge/Organizations-%d-%s?style=%s&logo=%s", len(orgs), color, style, logo)
-		http.Redirect(w, r, url, http.StatusMovedPermanently)
+
+		// Get SVG from shields.io using the URL
+		resp, err := http.Get(url)
+		if err != nil || resp.StatusCode != http.StatusOK {
+			log.Fatal("Error fetching badge from shields.io")
+		}
+
+		// Extract SVG from response body
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("Error reading the GET body")
+		}
+
+		// Display SVG badge
+		w.Header().Set("content-type", "image/svg+xml")
+		w.WriteHeader(200)
+		fmt.Fprintf(w, "%s", data)
 	}
 }
 
@@ -88,7 +105,20 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 		years := int64(now.Sub(created).Hours() / 24 / 365)
 
 		url := fmt.Sprintf("https://img.shields.io/badge/Years-%d-%s?style=%s&logo=%s", years, color, style, logo)
-		http.Redirect(w, r, url, http.StatusMovedPermanently)
+
+		resp, err := http.Get(url)
+		if err != nil || resp.StatusCode != http.StatusOK {
+			log.Fatal("Error fetching badge from shields.io")
+		}
+
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal("Error reading the GET body")
+		}
+
+		w.Header().Set("content-type", "image/svg+xml")
+		w.WriteHeader(200)
+		fmt.Fprintf(w, "%s", data)
 	}
 }
 
