@@ -23,8 +23,21 @@ func organizationHandler(client github.Client) http.HandlerFunc {
 			http.Error(w, "method is not supported", http.StatusNotFound)
 		}
 
+		values := r.URL.Query()
 		// Get GitHub username, i.e. /organizations?username=dtemir
-		username := r.URL.Query().Get("username")
+		username := values.Get("username")
+
+		// Get shields.io color, default to brightgreen
+		color := values.Get("color")
+		if len(color) == 0 {
+			color = "brigthgreen"
+		}
+
+		// Get shields.io style, default to empty string (shield.io's flat style)
+		style := values.Get("style")
+
+		// Get logo, default to none
+		logo := values.Get("logo")
 
 		// Fetch the number of Organizations the user has
 		// docs.github.com/en/rest/orgs/orgs?apiVersion=2022-11-28#list-organizations-for-a-user
@@ -33,7 +46,9 @@ func organizationHandler(client github.Client) http.HandlerFunc {
 			log.Fatal("Error fetching organization list\n %w", username, err)
 		}
 
-		fmt.Fprintf(w, "Number of organizations for %s is %d", username, len(orgs))
+		// Redirect to shields.io badge
+		url := fmt.Sprintf("https://img.shields.io/badge/Organizations-%d-%s?style=%s&logo=%s", len(orgs), color, style, logo)
+		http.Redirect(w, r, url, http.StatusOK)
 	}
 }
 
