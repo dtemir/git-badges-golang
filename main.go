@@ -30,7 +30,7 @@ func organizationHandler(client github.Client) http.HandlerFunc {
 		// docs.github.com/en/rest/orgs/orgs?apiVersion=2022-11-28#list-organizations-for-a-user
 		orgs, _, err := client.Organizations.List(context.Background(), username, nil)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal("Error fetching organization list\n %w", username, err)
 		}
 
 		fmt.Fprintf(w, "Number of organizations for %s is %d", username, len(orgs))
@@ -38,23 +38,25 @@ func organizationHandler(client github.Client) http.HandlerFunc {
 }
 
 func main() {
+	// Load in .env file with GitHub Token
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file\n %w", err)
 	}
 
+	// Create a GitHub client to make API calls
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-
 	client := github.NewClient(tc)
 
+	// Show number of organizations for user
 	http.HandleFunc("/organizations", organizationHandler(*client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Fatal(err)
+		log.Fatal("Error starting the server\n %w", err)
 	}
 }
