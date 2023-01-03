@@ -48,7 +48,7 @@ func organizationHandler(client github.Client) http.HandlerFunc {
 
 		// Redirect to shields.io badge
 		url := fmt.Sprintf("https://img.shields.io/badge/Organizations-%d-%s?style=%s&logo=%s", len(orgs), color, style, logo)
-		http.Redirect(w, r, url, http.StatusOK)
+		http.Redirect(w, r, url, http.StatusMovedPermanently)
 	}
 }
 
