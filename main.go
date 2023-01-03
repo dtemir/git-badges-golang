@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 
@@ -13,7 +14,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-// Badge with the number of GitHub Organizations
+// Badge with the number of your GitHub Organizations
 func organizationsHandler(client github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/organizations" {
@@ -52,6 +53,45 @@ func organizationsHandler(client github.Client) http.HandlerFunc {
 	}
 }
 
+// Badge with the number of years you have been a GitHub member
+func yearsHandler(client github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/years" {
+			http.Error(w, "404 not found", http.StatusNotFound)
+		}
+		if r.Method != "GET" {
+			http.Error(w, "Method is not supported", http.StatusNotFound)
+		}
+
+		values := r.URL.Query()
+		username := values.Get("username")
+
+		color := values.Get("color")
+		if len(color) == 0 {
+			color = "brigthgreen"
+		}
+
+		style := values.Get("style")
+
+		logo := values.Get("logo")
+
+		// Fetch the user data
+		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
+		user, _, err := client.Users.Get(context.Background(), username)
+		if err != nil {
+			log.Fatal("Error fetching user\n %w", username, err)
+		}
+
+		// Calculate the number of years passed since user creation
+		created := user.GetCreatedAt().Time
+		now := time.Now()
+		years := int64(now.Sub(created).Hours() / 24 / 365)
+
+		url := fmt.Sprintf("https://img.shields.io/badge/Years-%d-%s?style=%s&logo=%s", years, color, style, logo)
+		http.Redirect(w, r, url, http.StatusMovedPermanently)
+	}
+}
+
 func main() {
 	// Load in .env file with GitHub Token
 	err := godotenv.Load()
@@ -69,6 +109,9 @@ func main() {
 
 	// Show number of organizations for user
 	http.HandleFunc("/organizations", organizationsHandler(*client))
+
+	// Show number of years user has been a GitHub member
+	http.HandleFunc("/years", yearsHandler(*client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
