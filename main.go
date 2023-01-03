@@ -106,6 +106,50 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 	}
 }
 
+// Badge with the number of public repos you have
+func reposHandler(client github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/repos" {
+			http.Error(w, "404 not found", http.StatusNotFound)
+		}
+		if r.Method != "GET" {
+			http.Error(w, "Method is not supported", http.StatusNotFound)
+		}
+
+		values := r.URL.Query()
+		username := values.Get("username")
+
+		color := values.Get("color")
+		if len(color) == 0 {
+			color = "brigthgreen"
+		}
+
+		style := values.Get("style")
+
+		logo := values.Get("logo")
+
+		// Fetch the user data
+		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
+		user, _, err := client.Users.Get(context.Background(), username)
+		if err != nil {
+			log.Fatal("Error fetching user\n %w", username, err)
+		}
+
+		// Get the number of public repos the user has
+		repos := user.GetPublicRepos()
+
+		url := fmt.Sprintf("https://img.shields.io/badge/Repos-%d-%s?style=%s&logo=%s", repos, color, style, logo)
+
+		svg := getSVG(url)
+
+		w.Header().Set("content-type", "image/svg+xml")
+		w.Header().Set("cache-control", "no-cache")
+		w.WriteHeader(200)
+		fmt.Fprintf(w, "%s", svg)
+
+	}
+}
+
 // Get SVG from shields.io for rendering
 func getSVG(url string) []byte {
 	resp, err := http.Get(url)
@@ -141,6 +185,8 @@ func main() {
 
 	// Show number of years user has been a GitHub member
 	http.HandleFunc("/years", yearsHandler(*client))
+
+	http.HandleFunc("/repos", reposHandler(*client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
