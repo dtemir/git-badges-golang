@@ -14,13 +14,13 @@ import (
 )
 
 // Badge with the number of GitHub Organizations
-func organizationHandler(client github.Client) http.HandlerFunc {
+func organizationsHandler(client github.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/organizations" {
 			http.Error(w, "404 not found", http.StatusNotFound)
 		}
 		if r.Method != "GET" {
-			http.Error(w, "method is not supported", http.StatusNotFound)
+			http.Error(w, "Method is not supported", http.StatusNotFound)
 		}
 
 		values := r.URL.Query()
@@ -68,7 +68,7 @@ func main() {
 	client := github.NewClient(tc)
 
 	// Show number of organizations for user
-	http.HandleFunc("/organizations", organizationHandler(*client))
+	http.HandleFunc("/organizations", organizationsHandler(*client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
