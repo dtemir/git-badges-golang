@@ -9,7 +9,7 @@ import (
 	"github.com/google/go-github/v48/github"
 )
 
-// Return first GitHub organization
+// Badge with the number of GitHub Organizations
 func organizationHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/organizations" {
 		http.Error(w, "404 not found", http.StatusNotFound)
@@ -18,14 +18,19 @@ func organizationHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method is not supported", http.StatusNotFound)
 	}
 
+	// Get GitHub username, i.e. /organizations?username=dtemir
+	username := r.URL.Query().Get("username")
+
 	client := github.NewClient(nil)
 
-	orgs, _, err := client.Organizations.List(context.Background(), "dtemir", nil)
+	// Fetch the number of Organizations the user has
+	// docs.github.com/en/rest/orgs/orgs?apiVersion=2022-11-28#list-organizations-for-a-user
+	orgs, _, err := client.Organizations.List(context.Background(), username, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Fprintf(w, "%v", orgs[0])
+	fmt.Fprintf(w, "Number of organizations for %s is %d", username, len(orgs))
 }
 
 func main() {
