@@ -150,6 +150,42 @@ func reposHandler(client github.Client) http.HandlerFunc {
 	}
 }
 
+var visits = make(map[string]int)
+
+func visitsHandler(client github.Client) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/visits" {
+			http.Error(w, "404 not found", http.StatusNotFound)
+		}
+		if r.Method != "GET" {
+			http.Error(w, "Method is not supported", http.StatusNotFound)
+		}
+
+		values := r.URL.Query()
+		username := values.Get("username")
+
+		color := values.Get("color")
+		if len(color) == 0 {
+			color = "brigthgreen"
+		}
+
+		style := values.Get("style")
+
+		logo := values.Get("logo")
+
+		visits[username] = visits[username] + 1
+
+		url := fmt.Sprintf("https://img.shields.io/badge/Visits-%d-%s?style=%s&logo=%s", visits[username], color, style, logo)
+
+		svg := getSVG(url)
+
+		w.Header().Set("content-type", "image/svg+xml")
+		w.Header().Set("cache-control", "no-cache")
+		w.WriteHeader(200)
+		fmt.Fprintf(w, "%s", svg)
+	}
+}
+
 // Get SVG from shields.io for rendering
 func getSVG(url string) []byte {
 	resp, err := http.Get(url)
@@ -186,7 +222,11 @@ func main() {
 	// Show number of years user has been a GitHub member
 	http.HandleFunc("/years", yearsHandler(*client))
 
+	// Show number of repos user owns
 	http.HandleFunc("/repos", reposHandler(*client))
+
+	// Show number of visits to user's GitHub page
+	http.HandleFunc("/visits", visitsHandler(*client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
