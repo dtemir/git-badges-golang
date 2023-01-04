@@ -6,4 +6,6 @@ Inspired by [git-badges](https://github.com/puf17640/git-badges) and [serverless
 
 [![Organizations Badge](http://129.80.135.121:8080/organizations?username=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/organizations?username=dtemir&style=for-the-badge&logo=github&color=yellow)
 
-[![Years Badge](http://129.80.135.121:8080/years?username=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/organizations?username=dtemir&style=for-the-badge&logo=github&color=yellow)
+[![Years Badge](http://129.80.135.121:8080/years?username=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/years?username=dtemir&style=for-the-badge&logo=github&color=yellow)
+
+[![Repos Badge](http://129.80.135.121:8080/repos?username=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/repos?username=dtemir&style=for-the-badge&logo=github&color=yellow)
