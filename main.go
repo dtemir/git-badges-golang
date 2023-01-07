@@ -26,19 +26,21 @@ func main() {
 		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
+	gh_client := github.NewClient(tc)
+
+	// Create a MongoDB client to store visit counts
 
 	// Show number of organizations for user
-	http.HandleFunc("/organizations", organizationsHandler(*client))
+	http.HandleFunc("/organizations", organizationsHandler(*gh_client))
 
 	// Show number of years user has been a GitHub member
-	http.HandleFunc("/years", yearsHandler(*client))
+	http.HandleFunc("/years", yearsHandler(*gh_client))
 
 	// Show number of repos user owns
-	http.HandleFunc("/repos", reposHandler(*client))
+	http.HandleFunc("/repos", reposHandler(*gh_client))
 
 	// Show number of visits to user's GitHub page
-	http.HandleFunc("/visits", visitsHandler(*client))
+	http.HandleFunc("/visits", visitsHandler(*gh_client))
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
