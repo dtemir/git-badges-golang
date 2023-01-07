@@ -56,17 +56,17 @@ Number of public repos the user owns
 
 ### Visits
 
-[![Visits Badge](http://129.80.135.121:8080/visits?username=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/visits?username=dtemir&style=for-the-badge&logo=github&color=yellow)
+[![Visits Badge](http://129.80.135.121:8080/visits?username=dtemir&repo=dtemir&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/visits?username=dtemir&style=for-the-badge&logo=github&color=yellow)
 
 Number of visitors the user had
 
 #### Endpoint
 
-`http://129.80.135.121:8080/visits?username={username}&style=for-the-badge&logo=github&color=yellow`
+`http://129.80.135.121:8080/visits?username={username}&repo={repo}&style=for-the-badge&logo=github&color=yellow`
 
 #### Markdown
 
-`[![Visits Badge](http://129.80.135.121:8080/visits?username={username}&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/visits?username=dtemir&style=for-the-badge&logo=github&color=yellow)`
+`[![Visits Badge](http://129.80.135.121:8080/visits?username={username}&repo={repo}&style=for-the-badge&logo=github&color=yellow)](http://129.80.135.121:8080/visits?username={username}&repo={repo}&style=for-the-badge&logo=github&color=yellow)`
 
 ## Deploy
 

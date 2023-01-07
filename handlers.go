@@ -160,6 +160,7 @@ func visitsHandler(client github.Client, collection mongo.Collection) http.Handl
 
 		values := r.URL.Query()
 		username := values.Get("username")
+		repo := username + "/" + values.Get("repo")
 
 		color := values.Get("color")
 		if len(color) == 0 {
@@ -170,9 +171,9 @@ func visitsHandler(client github.Client, collection mongo.Collection) http.Handl
 
 		logo := values.Get("logo")
 
-		visits[username] = visits[username] + 1
+		visits[repo] = visits[repo] + 1
 
-		url := fmt.Sprintf("https://img.shields.io/badge/Visits-%d-%s?style=%s&logo=%s", visits[username], color, style, logo)
+		url := fmt.Sprintf("https://img.shields.io/badge/Visits-%d-%s?style=%s&logo=%s", visits[repo], color, style, logo)
 
 		svg := getSVG(url)
 
