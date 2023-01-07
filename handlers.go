@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/google/go-github/v48/github"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Badge with the number of your GitHub Organizations
@@ -148,7 +149,7 @@ func reposHandler(client github.Client) http.HandlerFunc {
 
 var visits = make(map[string]int)
 
-func visitsHandler(client github.Client) http.HandlerFunc {
+func visitsHandler(client github.Client, collection mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/visits" {
 			http.Error(w, "404 not found", http.StatusNotFound)
