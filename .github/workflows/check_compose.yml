@@ -20,3 +20,4 @@ jobs:
           curl localhost:8080
           # Stop and remove the containers
           docker compose down
+          
