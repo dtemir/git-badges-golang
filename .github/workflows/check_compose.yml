@@ -1,0 +1,19 @@
+name: Check Docker Compose
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check Docker Compose
+        run: |
+          # Build and start the app and MongoDB with docker-compose
+          docker compose up -d --build
+          # Wait for the app to start
+          sleep 15
+          # Test that the app is running
+          curl localhost:8080
+          # Stop and remove the containers
+          docker compose down
