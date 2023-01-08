@@ -1,0 +1,22 @@
+name: Deploy to Oracle Cloud Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Add known hosts
+        run: ssh-keyscan 129.80.135.121 >> ~/.ssh/known_hosts
+      - name: Kill tmux sessions
+        run:  ssh ubuntu@129.80.135.121 'if tmux list-sessions; then tmux kill-session -t 0; fi && tmux new-session -d -s 0'
+      - name: Run compose
+        run: ssh ubuntu@129.80.135.121 'tmux send-keys "cd git-badges-golang && git pull && sudo docker compose up" ENTER'
