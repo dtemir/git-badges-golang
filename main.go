@@ -30,7 +30,7 @@ func getGitHubClient(token string) *github.Client {
 
 func getMongoDBCollection() *mongo.Collection {
 	// Create a MongoDB client to store visit counts
-	mgClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	mgClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://mongo:27017"))
 	if err != nil {
 		log.Fatal("MongoDB: Couldn't create a MongoDB client\n %w", err)
 	}
