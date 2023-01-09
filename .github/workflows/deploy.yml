@@ -1,4 +1,4 @@
-name: Deploy to Oracle Cloud Server
+name: CD - Deploy to Oracle Cloud Server
 
 on:
   push:
