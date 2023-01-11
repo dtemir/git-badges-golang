@@ -69,7 +69,7 @@ func main() {
 	http.HandleFunc("/visits", visitsHandler(*ghClient, *visitsCollection))
 
 	// Show general message if people arrive at index
-	http.HandleFunc("/", helloHandler)
+	http.HandleFunc("/", indexHandler)
 
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
