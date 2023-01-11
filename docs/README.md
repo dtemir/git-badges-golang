@@ -100,15 +100,14 @@ If you would like to deploy it yourself, please follow these steps:
 2. Create a `.env` file with a [GitHub token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) (look at `.env.example`)
 3. Build an image with `docker compose up` (add `-d` if you want to run it in the background)
 
+Don't forget to run tests `go test` to make sure everything works correctly!
+
 ### Reverse Proxy and SSL/TLS
 
-To avoid having to send all requests to port 8080, you want to setup a reverse proxy that will forward traffic through port 80 (the default port when accessing websites)
-
-If I didn't set it up, you would have to access the website through `badges.temir.dev:8080` instead of regular `badges.temir.dev`
-
-To avoid using HTTP and use secure HTTPS instead, you want to receive an SSL certificate with Let's Encrypt, which is automatable with `certbot`
-
-If this wasn't setup, you would have to make requests to `http://badges.temir.dev` instead of `https://badges.temir.dev` and it would cause problems with common browsers
+* To avoid having to send all requests to port 8080, you want to setup a reverse proxy that will forward traffic through port 80 (the default port when accessing websites)
+    * If this wasn't setup, you would have to access the website through `badges.temir.dev:8080` instead of regular `badges.temir.dev`
+* To avoid using HTTP and use secure HTTPS instead, you want to receive an SSL certificate with Let's Encrypt, which is automatable with `certbot`
+    * If this wasn't setup, you would have to make requests to `http://badges.temir.dev` instead of `https://badges.temir.dev` and it would cause problems with common browsers
 
 Find how to accomplish both of these things in this article: [here](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/)
 
