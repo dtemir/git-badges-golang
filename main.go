@@ -68,6 +68,9 @@ func main() {
 	// Show number of visits to user's GitHub page
 	http.HandleFunc("/visits", visitsHandler(*ghClient, *visitsCollection))
 
+	// Show general message if people arrive at index
+	http.HandleFunc("/", helloHandler)
+
 	fmt.Printf("Starting server at port 8080\n")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal("Error starting the server\n %w", err)

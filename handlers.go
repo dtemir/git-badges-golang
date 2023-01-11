@@ -146,6 +146,7 @@ func reposHandler(client github.Client) http.HandlerFunc {
 	}
 }
 
+// Badge with the number of visits your repo had so far
 func visitsHandler(client github.Client, collection mongo.Collection) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/visits" {
@@ -181,4 +182,20 @@ func visitsHandler(client github.Client, collection mongo.Collection) http.Handl
 		w.WriteHeader(200)
 		fmt.Fprintf(w, "%s", svg)
 	}
+}
+
+// Show a message if people land at "/" instead of any of the routes
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "404 not found", http.StatusNotFound)
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method is not supported", http.StatusNotFound)
+	}
+
+	w.Header().Set("content-type", "text/html")
+	w.Header().Set("cache-control", "no-cache")
+	w.WriteHeader(200)
+	fmt.Fprintln(w, "Hey! Thanks for using this tool, but looks like you got lost.",
+		"Please go to <a href='github.com/dtemir/git-badges-golang'>github.com/dtemir/git-badges-golang</a> to learn how to use this")
 }
