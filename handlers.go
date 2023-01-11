@@ -41,7 +41,7 @@ func organizationsHandler(client github.Client) http.HandlerFunc {
 		// docs.github.com/en/rest/orgs/orgs?apiVersion=2022-11-28#list-organizations-for-a-user
 		orgs, _, err := client.Organizations.List(context.Background(), username, nil)
 		if err != nil {
-			log.Fatal("Error fetching organization list\n %w", username, err)
+			log.Fatal("GitHub: Error fetching organization list\n %w", username, err)
 		}
 
 		// Create a shields.io badge
@@ -83,7 +83,7 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 		user, _, err := client.Users.Get(context.Background(), username)
 		if err != nil {
-			log.Fatal("Error fetching user\n %w", username, err)
+			log.Fatal("GitHub: Error fetching user\n %w", username, err)
 		}
 
 		// Calculate the number of years passed since user creation
@@ -128,7 +128,7 @@ func reposHandler(client github.Client) http.HandlerFunc {
 		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 		user, _, err := client.Users.Get(context.Background(), username)
 		if err != nil {
-			log.Fatal("Error fetching user\n %w", username, err)
+			log.Fatal("GitHub: Error fetching user\n %w", username, err)
 		}
 
 		// Get the number of public repos the user has
