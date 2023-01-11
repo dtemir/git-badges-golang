@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -65,4 +66,13 @@ func getVisitsCount(repo string, collection mongo.Collection) int64 {
 	}
 
 	return visits
+}
+
+// Get number of SVG tags for testing
+// Example: <svg...>...</svg>
+func getSVGCount(svg string) int {
+	re := regexp.MustCompile(`<svg(.*?)</svg>`)
+	matches := len(re.FindAllString(svg, -1))
+
+	return matches
 }
