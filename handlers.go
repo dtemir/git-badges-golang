@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -41,13 +40,15 @@ func organizationsHandler(client github.Client) http.HandlerFunc {
 		// docs.github.com/en/rest/orgs/orgs?apiVersion=2022-11-28#list-organizations-for-a-user
 		orgs, _, err := client.Organizations.List(context.Background(), username, nil)
 		if err != nil {
-			log.Fatal("GitHub: Error fetching organization list\n %w", username, err)
+			WarningLogger.Println("GitHub: Error fetching organization list for user", username, err)
+			http.Error(w, "Incorrect GitHub username. Please make sure it's correct and try again", http.StatusBadRequest)
 		}
 
 		// Create a shields.io badge
 		url := fmt.Sprintf("https://img.shields.io/badge/Organizations-%d-%s?style=%s&logo=%s", len(orgs), color, style, logo)
 
 		svg := getSVG(url)
+		InfoLogger.Println("Successfully created a badge for", username, url)
 
 		// Display SVG badge
 		w.Header().Set("content-type", "image/svg+xml")
@@ -83,7 +84,8 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 		user, _, err := client.Users.Get(context.Background(), username)
 		if err != nil {
-			log.Fatal("GitHub: Error fetching user\n %w", username, err)
+			WarningLogger.Println("GitHub: Error fetching years for user", username, err)
+			http.Error(w, "Incorrect GitHub username. Please make sure it's correct and try again", http.StatusBadRequest)
 		}
 
 		// Calculate the number of years passed since user creation
@@ -94,6 +96,7 @@ func yearsHandler(client github.Client) http.HandlerFunc {
 		url := fmt.Sprintf("https://img.shields.io/badge/Years-%d-%s?style=%s&logo=%s", years, color, style, logo)
 
 		svg := getSVG(url)
+		InfoLogger.Println("Successfully created a badge for", username, url)
 
 		w.Header().Set("content-type", "image/svg+xml")
 		w.Header().Set("cache-control", "no-cache")
@@ -128,7 +131,8 @@ func reposHandler(client github.Client) http.HandlerFunc {
 		// https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user
 		user, _, err := client.Users.Get(context.Background(), username)
 		if err != nil {
-			log.Fatal("GitHub: Error fetching user\n %w", username, err)
+			WarningLogger.Println("GitHub: Error fetching repos for user", username, err)
+			http.Error(w, "Incorrect GitHub username. Please make sure it's correct and try again", http.StatusBadRequest)
 		}
 
 		// Get the number of public repos the user has
@@ -137,6 +141,7 @@ func reposHandler(client github.Client) http.HandlerFunc {
 		url := fmt.Sprintf("https://img.shields.io/badge/Repos-%d-%s?style=%s&logo=%s", repos, color, style, logo)
 
 		svg := getSVG(url)
+		InfoLogger.Println("Successfully created a badge for", username, url)
 
 		w.Header().Set("content-type", "image/svg+xml")
 		w.Header().Set("cache-control", "no-cache")
@@ -176,6 +181,7 @@ func visitsHandler(client github.Client, collection mongo.Collection) http.Handl
 		url := fmt.Sprintf("https://img.shields.io/badge/Visits-%d-%s?style=%s&logo=%s", visits, color, style, logo)
 
 		svg := getSVG(url)
+		InfoLogger.Println("Successfully created a badge for", username, url)
 
 		w.Header().Set("content-type", "image/svg+xml")
 		w.Header().Set("cache-control", "no-cache")
