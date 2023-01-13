@@ -5,11 +5,45 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 
+	"github.com/google/go-github/v48/github"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"golang.org/x/oauth2"
 )
+
+// Get a GitHub client to make API calls
+func getGitHubClient(token string) *github.Client {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: os.Getenv("GITHUB_TOKEN")},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	ghClient := github.NewClient(tc)
+
+	return ghClient
+}
+
+// Get a MongoDB client to store visit counts
+func getMongoDBCollection() *mongo.Collection {
+	mgClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://mongo:27017"))
+	if err != nil {
+		log.Fatal("MongoDB: Couldn't create a MongoDB client\n %w", err)
+	}
+
+	// Ping to test if the MongoDB database has been found
+	if err := mgClient.Ping(context.Background(), readpref.Primary()); err != nil {
+		log.Fatal("MongoDB: Couldn't find a MongoDB database\n %w", err)
+	}
+
+	visitsCollection := mgClient.Database("production").Collection("visits")
+
+	return visitsCollection
+}
 
 // Get SVG from shields.io for rendering
 func getSVG(url string) []byte {
